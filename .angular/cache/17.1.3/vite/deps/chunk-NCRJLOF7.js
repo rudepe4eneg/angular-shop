@@ -59,7 +59,7 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-2NCJZ5ME.js";
+} from "./chunk-BDK72RLS.js";
 
 // node_modules/@angular/common/fesm2022/common.mjs
 var _DOM = null;
@@ -67,7 +67,7 @@ function getDOM() {
   return _DOM;
 }
 function setRootDomAdapter(adapter) {
-  _DOM != null ? _DOM : _DOM = adapter;
+  _DOM ??= adapter;
 }
 var DomAdapter = class {
 };
@@ -234,11 +234,10 @@ var LocationStrategy = _LocationStrategy;
 var APP_BASE_HREF = new InjectionToken(ngDevMode ? "appBaseHref" : "");
 var _PathLocationStrategy = class _PathLocationStrategy extends LocationStrategy {
   constructor(_platformLocation, href) {
-    var _a, _b, _c;
     super();
     this._platformLocation = _platformLocation;
     this._removeListenerFns = [];
-    this._baseHref = (_c = (_b = href != null ? href : this._platformLocation.getBaseHrefFromDOM()) != null ? _b : (_a = inject(DOCUMENT).location) == null ? void 0 : _a.origin) != null ? _c : "";
+    this._baseHref = href ?? this._platformLocation.getBaseHrefFromDOM() ?? inject(DOCUMENT).location?.origin ?? "";
   }
   /** @nodoc */
   ngOnDestroy() {
@@ -258,7 +257,7 @@ var _PathLocationStrategy = class _PathLocationStrategy extends LocationStrategy
   path(includeHash = false) {
     const pathname = this._platformLocation.pathname + normalizeQueryParams(this._platformLocation.search);
     const hash = this._platformLocation.hash;
-    return hash && includeHash ? "".concat(pathname).concat(hash) : pathname;
+    return hash && includeHash ? `${pathname}${hash}` : pathname;
   }
   pushState(state, title, url, queryParams) {
     const externalUrl = this.prepareExternalUrl(url + normalizeQueryParams(queryParams));
@@ -278,8 +277,7 @@ var _PathLocationStrategy = class _PathLocationStrategy extends LocationStrategy
     return this._platformLocation.getState();
   }
   historyGo(relativePosition = 0) {
-    var _a, _b;
-    (_b = (_a = this._platformLocation).historyGo) == null ? void 0 : _b.call(_a, relativePosition);
+    this._platformLocation.historyGo?.(relativePosition);
   }
 };
 _PathLocationStrategy.ɵfac = function PathLocationStrategy_Factory(t) {
@@ -332,8 +330,7 @@ var _HashLocationStrategy = class _HashLocationStrategy extends LocationStrategy
     return this._baseHref;
   }
   path(includeHash = false) {
-    var _a;
-    const path = (_a = this._platformLocation.hash) != null ? _a : "#";
+    const path = this._platformLocation.hash ?? "#";
     return path.length > 0 ? path.substring(1) : path;
   }
   prepareExternalUrl(internal) {
@@ -364,8 +361,7 @@ var _HashLocationStrategy = class _HashLocationStrategy extends LocationStrategy
     return this._platformLocation.getState();
   }
   historyGo(relativePosition = 0) {
-    var _a, _b;
-    (_b = (_a = this._platformLocation).historyGo) == null ? void 0 : _b.call(_a, relativePosition);
+    this._platformLocation.historyGo?.(relativePosition);
   }
 };
 _HashLocationStrategy.ɵfac = function HashLocationStrategy_Factory(t) {
@@ -410,8 +406,7 @@ var _Location = class _Location {
   }
   /** @nodoc */
   ngOnDestroy() {
-    var _a;
-    (_a = this._urlChangeSubscription) == null ? void 0 : _a.unsubscribe();
+    this._urlChangeSubscription?.unsubscribe();
     this._urlChangeListeners = [];
   }
   /**
@@ -522,8 +517,7 @@ var _Location = class _Location {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/History_API#Moving_to_a_specific_point_in_history
    */
   historyGo(relativePosition = 0) {
-    var _a, _b;
-    (_b = (_a = this._locationStrategy).historyGo) == null ? void 0 : _b.call(_a, relativePosition);
+    this._locationStrategy.historyGo?.(relativePosition);
   }
   /**
    * Registers a URL change listener. Use to catch updates performed by the Angular
@@ -533,17 +527,15 @@ var _Location = class _Location {
    * @returns A function that, when executed, unregisters a URL change listener.
    */
   onUrlChange(fn) {
-    var _a;
     this._urlChangeListeners.push(fn);
-    (_a = this._urlChangeSubscription) != null ? _a : this._urlChangeSubscription = this.subscribe((v) => {
+    this._urlChangeSubscription ??= this.subscribe((v) => {
       this._notifyUrlChangeListeners(v.url, v.state);
     });
     return () => {
-      var _a2;
       const fnIndex = this._urlChangeListeners.indexOf(fn);
       this._urlChangeListeners.splice(fnIndex, 1);
       if (this._urlChangeListeners.length === 0) {
-        (_a2 = this._urlChangeSubscription) == null ? void 0 : _a2.unsubscribe();
+        this._urlChangeSubscription?.unsubscribe();
         this._urlChangeSubscription = null;
       }
     };
@@ -906,7 +898,7 @@ function getLocaleCurrencies(locale) {
 var getLocalePluralCase2 = getLocalePluralCase;
 function checkFullData(data) {
   if (!data[LocaleDataIndex.ExtraData]) {
-    throw new Error('Missing extra locale data for the locale "'.concat(data[LocaleDataIndex.LocaleId], '". Use "registerLocaleData" to load new data. See the "I18n guide" on angular.io to know more.'));
+    throw new Error(`Missing extra locale data for the locale "${data[LocaleDataIndex.LocaleId]}". Use "registerLocaleData" to load new data. See the "I18n guide" on angular.io to know more.`);
   }
 }
 function getLocaleExtraDayPeriodRules(locale) {
@@ -1048,9 +1040,8 @@ function createDate(year, month, date) {
   return newDate;
 }
 function getNamedFormat(locale, format) {
-  var _a;
   const localeId = getLocaleId(locale);
-  (_a = NAMED_FORMATS[localeId]) != null ? _a : NAMED_FORMATS[localeId] = {};
+  NAMED_FORMATS[localeId] ??= {};
   if (NAMED_FORMATS[localeId][format]) {
     return NAMED_FORMATS[localeId][format];
   }
@@ -1173,7 +1164,7 @@ function getDatePart(part, date) {
     case DateType.Day:
       return date.getDay();
     default:
-      throw new Error('Unknown DateType value "'.concat(part, '".'));
+      throw new Error(`Unknown DateType value "${part}".`);
   }
 }
 function dateStrGetter(name, width, form = FormStyle.Format, extended = false) {
@@ -1221,7 +1212,7 @@ function getDateTranslation(date, locale, name, width, form, extended) {
       return getLocaleEraNames(locale, width)[date.getFullYear() <= 0 ? 0 : 1];
     default:
       const unexpected = name;
-      throw new Error("unexpected translation type ".concat(unexpected));
+      throw new Error(`unexpected translation type ${unexpected}`);
   }
 }
 function timeZoneGetter(width) {
@@ -1243,7 +1234,7 @@ function timeZoneGetter(width) {
           return (zone >= 0 ? "+" : "") + padNumber(hours, 2, minusSign) + ":" + padNumber(Math.abs(zone % 60), 2, minusSign);
         }
       default:
-        throw new Error('Unknown zone width "'.concat(width, '"'));
+        throw new Error(`Unknown zone width "${width}"`);
     }
   };
 }
@@ -1527,7 +1518,7 @@ function toDate(value) {
   }
   const date = new Date(value);
   if (!isDate(date)) {
-    throw new Error('Unable to convert "'.concat(value, '" into a date'));
+    throw new Error(`Unable to convert "${value}" into a date`);
   }
   return date;
 }
@@ -1577,7 +1568,7 @@ function formatNumberToLocaleString(value, pattern, locale, groupSymbol, decimal
     if (digitsInfo) {
       const parts = digitsInfo.match(NUMBER_FORMAT_REGEXP);
       if (parts === null) {
-        throw new Error("".concat(digitsInfo, " is not a valid digit info"));
+        throw new Error(`${digitsInfo} is not a valid digit info`);
       }
       const minIntPart = parts[1];
       const minFractionPart = parts[3];
@@ -1756,7 +1747,7 @@ function parseNumber(num) {
 }
 function roundNumber(parsedNumber, minFrac, maxFrac) {
   if (minFrac > maxFrac) {
-    throw new Error("The minimum number of digits after fraction (".concat(minFrac, ") is higher than the maximum (").concat(maxFrac, ")."));
+    throw new Error(`The minimum number of digits after fraction (${minFrac}) is higher than the maximum (${maxFrac}).`);
   }
   let digits = parsedNumber.digits;
   let fractionLen = digits.length - parsedNumber.integerLen;
@@ -1846,7 +1837,7 @@ var NgLocalization = _NgLocalization;
   }], null, null);
 })();
 function getPluralCategory(value, cases, ngLocalization, locale) {
-  let key = "=".concat(value);
+  let key = `=${value}`;
   if (cases.indexOf(key) > -1) {
     return key;
   }
@@ -1857,7 +1848,7 @@ function getPluralCategory(value, cases, ngLocalization, locale) {
   if (cases.indexOf("other") > -1) {
     return "other";
   }
-  throw new Error('No plural message found for value "'.concat(value, '"'));
+  throw new Error(`No plural message found for value "${value}"`);
 }
 var _NgLocaleLocalization = class _NgLocaleLocalization extends NgLocalization {
   constructor(locale) {
@@ -2003,7 +1994,7 @@ var _NgClass = class _NgClass {
   _toggleClass(klass, enabled) {
     if (ngDevMode) {
       if (typeof klass !== "string") {
-        throw new Error("NgClass can only toggle CSS classes expressed as strings, got ".concat(stringify(klass)));
+        throw new Error(`NgClass can only toggle CSS classes expressed as strings, got ${stringify(klass)}`);
       }
     }
     klass = klass.trim();
@@ -2067,7 +2058,6 @@ var _NgComponentOutlet = class _NgComponentOutlet {
   }
   /** @nodoc */
   ngOnChanges(changes) {
-    var _a;
     if (this._needToReCreateComponentInstance(changes)) {
       this._viewContainerRef.clear();
       this._inputsUsed.clear();
@@ -2075,7 +2065,7 @@ var _NgComponentOutlet = class _NgComponentOutlet {
       if (this.ngComponentOutlet) {
         const injector = this.ngComponentOutletInjector || this._viewContainerRef.parentInjector;
         if (this._needToReCreateNgModuleInstance(changes)) {
-          (_a = this._moduleRef) == null ? void 0 : _a.destroy();
+          this._moduleRef?.destroy();
           if (this.ngComponentOutletNgModule) {
             this._moduleRef = createNgModule(this.ngComponentOutletNgModule, getParentInjector(injector));
           } else if (this.ngComponentOutletNgModuleFactory) {
@@ -2105,8 +2095,7 @@ var _NgComponentOutlet = class _NgComponentOutlet {
   }
   /** @nodoc */
   ngOnDestroy() {
-    var _a;
-    (_a = this._moduleRef) == null ? void 0 : _a.destroy();
+    this._moduleRef?.destroy();
   }
   _applyInputStateDiff(componentRef) {
     for (const [inputName, touched] of this._inputsUsed) {
@@ -2221,7 +2210,7 @@ var _NgForOf = class _NgForOf {
    */
   set ngForTrackBy(fn) {
     if ((typeof ngDevMode === "undefined" || ngDevMode) && fn != null && typeof fn !== "function") {
-      console.warn("trackBy must be a function, but received ".concat(JSON.stringify(fn), ". ") + "See https://angular.io/api/common/NgForOf#change-propagation for more information.");
+      console.warn(`trackBy must be a function, but received ${JSON.stringify(fn)}. See https://angular.io/api/common/NgForOf#change-propagation for more information.`);
     }
     this._trackByFn = fn;
   }
@@ -2258,7 +2247,7 @@ var _NgForOf = class _NgForOf {
           try {
             this._differ = this._differs.find(value).create(this.ngForTrackBy);
           } catch {
-            let errorMessage = "Cannot find a differ supporting object '".concat(value, "' of type '") + "".concat(getTypeName(value), "'. NgFor only supports binding to Iterables, such as Arrays.");
+            let errorMessage = `Cannot find a differ supporting object '${value}' of type '${getTypeName(value)}'. NgFor only supports binding to Iterables, such as Arrays.`;
             if (typeof value === "object") {
               errorMessage += " Did you mean to use the keyvalue pipe?";
             }
@@ -2465,7 +2454,7 @@ var NgIfContext = class {
 function assertTemplate(property, templateRef) {
   const isTemplateRefOrNull = !!(!templateRef || templateRef.createEmbeddedView);
   if (!isTemplateRefOrNull) {
-    throw new Error("".concat(property, " must be a TemplateRef, but received '").concat(stringify(templateRef), "'."));
+    throw new Error(`${property} must be a TemplateRef, but received '${stringify(templateRef)}'.`);
   }
 }
 var NG_SWITCH_USE_STRICT_EQUALS = true;
@@ -2517,9 +2506,9 @@ var _NgSwitch = class _NgSwitch {
   _matchCase(value) {
     const matched = NG_SWITCH_USE_STRICT_EQUALS ? value === this._ngSwitch : value == this._ngSwitch;
     if ((typeof ngDevMode === "undefined" || ngDevMode) && matched !== (value == this._ngSwitch)) {
-      console.warn(formatRuntimeError(2001, "As of Angular v17 the NgSwitch directive uses strict equality comparison === instead of == to match different cases. " + 'Previously the case value "'.concat(stringifyValue(value), '" matched switch expression value "').concat(stringifyValue(this._ngSwitch), '", but this is no longer the case with the stricter equality check. ') + "Your comparison results return different results using === vs. == and you should adjust your ngSwitch expression and / or values to conform with the strict equality requirements."));
+      console.warn(formatRuntimeError(2001, `As of Angular v17 the NgSwitch directive uses strict equality comparison === instead of == to match different cases. Previously the case value "${stringifyValue(value)}" matched switch expression value "${stringifyValue(this._ngSwitch)}", but this is no longer the case with the stricter equality check. Your comparison results return different results using === vs. == and you should adjust your ngSwitch expression and / or values to conform with the strict equality requirements.`));
     }
-    this._lastCasesMatched || (this._lastCasesMatched = matched);
+    this._lastCasesMatched ||= matched;
     this._lastCaseCheckIndex++;
     if (this._lastCaseCheckIndex === this._caseCount) {
       this._updateDefaultCases(!this._lastCasesMatched);
@@ -2653,10 +2642,10 @@ var NgSwitchDefault = _NgSwitchDefault;
   }], null);
 })();
 function throwNgSwitchProviderNotFoundError(attrName, directiveName) {
-  throw new RuntimeError(2e3, 'An element with the "'.concat(attrName, '" attribute ') + '(matching the "'.concat(directiveName, '" directive) must be located inside an element with the "ngSwitch" attribute ') + '(matching "NgSwitch" directive)');
+  throw new RuntimeError(2e3, `An element with the "${attrName}" attribute (matching the "${directiveName}" directive) must be located inside an element with the "ngSwitch" attribute (matching "NgSwitch" directive)`);
 }
 function stringifyValue(value) {
-  return typeof value === "string" ? "'".concat(value, "'") : String(value);
+  return typeof value === "string" ? `'${value}'` : String(value);
 }
 var _NgPlural = class _NgPlural {
   constructor(_localization) {
@@ -2717,7 +2706,7 @@ var _NgPluralCase = class _NgPluralCase {
   constructor(value, template, viewContainer, ngPlural) {
     this.value = value;
     const isANumber = !isNaN(Number(value));
-    ngPlural.addCase(isANumber ? "=".concat(value) : value, new SwitchView(viewContainer, template));
+    ngPlural.addCase(isANumber ? `=${value}` : value, new SwitchView(viewContainer, template));
   }
 };
 _NgPluralCase.ɵfac = function NgPluralCase_Factory(t) {
@@ -2779,7 +2768,7 @@ var _NgStyle = class _NgStyle {
     const [name, unit] = nameAndUnit.split(".");
     const flags = name.indexOf("-") === -1 ? void 0 : RendererStyleFlags2.DashCase;
     if (value != null) {
-      this._renderer.setStyle(this._ngEl.nativeElement, name, unit ? "".concat(value).concat(unit) : value, flags);
+      this._renderer.setStyle(this._ngEl.nativeElement, name, unit ? `${value}${unit}` : value, flags);
     } else {
       this._renderer.removeStyle(this._ngEl.nativeElement, name, flags);
     }
@@ -2831,7 +2820,6 @@ var _NgTemplateOutlet = class _NgTemplateOutlet {
     this.ngTemplateOutletInjector = null;
   }
   ngOnChanges(changes) {
-    var _a;
     if (this._shouldRecreateView(changes)) {
       const viewContainerRef = this._viewContainerRef;
       if (this._viewRef) {
@@ -2843,7 +2831,7 @@ var _NgTemplateOutlet = class _NgTemplateOutlet {
       }
       const viewContext = this._createContextForwardProxy();
       this._viewRef = viewContainerRef.createEmbeddedView(this.ngTemplateOutlet, viewContext, {
-        injector: (_a = this.ngTemplateOutletInjector) != null ? _a : void 0
+        injector: this.ngTemplateOutletInjector ?? void 0
       });
     }
   }
@@ -2915,7 +2903,7 @@ var NgTemplateOutlet = _NgTemplateOutlet;
 })();
 var COMMON_DIRECTIVES = [NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, NgPlural, NgPluralCase];
 function invalidPipeArgumentError(type, value) {
-  return new RuntimeError(2100, ngDevMode && "InvalidPipeArgument: '".concat(value, "' for pipe '").concat(stringify(type), "'"));
+  return new RuntimeError(2100, ngDevMode && `InvalidPipeArgument: '${value}' for pipe '${stringify(type)}'`);
 }
 var SubscribableStrategy = class {
   createSubscription(async, updateLatestValue) {
@@ -3115,12 +3103,11 @@ var _DatePipe = class _DatePipe {
     this.defaultOptions = defaultOptions;
   }
   transform(value, format, timezone, locale) {
-    var _a, _b, _c, _d, _e;
     if (value == null || value === "" || value !== value)
       return null;
     try {
-      const _format = (_b = format != null ? format : (_a = this.defaultOptions) == null ? void 0 : _a.dateFormat) != null ? _b : DEFAULT_DATE_FORMAT;
-      const _timezone = (_e = (_d = timezone != null ? timezone : (_c = this.defaultOptions) == null ? void 0 : _c.timezone) != null ? _d : this.defaultTimezone) != null ? _e : void 0;
+      const _format = format ?? this.defaultOptions?.dateFormat ?? DEFAULT_DATE_FORMAT;
+      const _timezone = timezone ?? this.defaultOptions?.timezone ?? this.defaultTimezone ?? void 0;
       return formatDate(value, _format, locale || this.locale, _timezone);
     } catch (error) {
       throw invalidPipeArgumentError(_DatePipe, error.message);
@@ -3292,11 +3279,10 @@ var _KeyValuePipe = class _KeyValuePipe {
     this.compareFn = defaultComparator;
   }
   transform(input, compareFn = defaultComparator) {
-    var _a;
     if (!input || !(input instanceof Map) && typeof input !== "object") {
       return null;
     }
-    (_a = this.differ) != null ? _a : this.differ = this.differs.find(input).create();
+    this.differ ??= this.differs.find(input).create();
     const differChanges = this.differ.diff(input);
     const compareFnChanged = compareFn !== this.compareFn;
     if (differChanges) {
@@ -3374,7 +3360,7 @@ var _DecimalPipe = class _DecimalPipe {
   transform(value, digitsInfo, locale) {
     if (!isValue(value))
       return null;
-    locale || (locale = this._locale);
+    locale ||= this._locale;
     try {
       const num = strToNumber(value);
       return formatNumber(num, locale, digitsInfo);
@@ -3431,7 +3417,7 @@ var _PercentPipe = class _PercentPipe {
   transform(value, digitsInfo, locale) {
     if (!isValue(value))
       return null;
-    locale || (locale = this._locale);
+    locale ||= this._locale;
     try {
       const num = strToNumber(value);
       return formatPercent(num, locale, digitsInfo);
@@ -3506,10 +3492,10 @@ var _CurrencyPipe = class _CurrencyPipe {
   transform(value, currencyCode = this._defaultCurrencyCode, display = "symbol", digitsInfo, locale) {
     if (!isValue(value))
       return null;
-    locale || (locale = this._locale);
+    locale ||= this._locale;
     if (typeof display === "boolean") {
       if ((typeof ngDevMode === "undefined" || ngDevMode) && console && console.warn) {
-        console.warn('Warning: the currency pipe has been changed in Angular v5. The symbolDisplay option (third parameter) is now a string instead of a boolean. The accepted values are "code", "symbol" or "symbol-narrow".');
+        console.warn(`Warning: the currency pipe has been changed in Angular v5. The symbolDisplay option (third parameter) is now a string instead of a boolean. The accepted values are "code", "symbol" or "symbol-narrow".`);
       }
       display = display ? "symbol" : "code";
     }
@@ -3568,7 +3554,7 @@ function strToNumber(value) {
     return Number(value);
   }
   if (typeof value !== "number") {
-    throw new Error("".concat(value, " is not a number"));
+    throw new Error(`${value} is not a number`);
   }
   return value;
 }
@@ -3734,7 +3720,7 @@ function findAnchorFromDocument(document, target) {
     while (currentNode) {
       const shadowRoot = currentNode.shadowRoot;
       if (shadowRoot) {
-        const result = shadowRoot.getElementById(target) || shadowRoot.querySelector('[name="'.concat(target, '"]'));
+        const result = shadowRoot.getElementById(target) || shadowRoot.querySelector(`[name="${target}"]`);
         if (result) {
           return result;
         }
@@ -3828,18 +3814,18 @@ function createImageLoader(buildUrlFn, exampleUrls) {
   };
 }
 function throwInvalidPathError(path, exampleUrls) {
-  throw new RuntimeError(2959, ngDevMode && "Image loader has detected an invalid path (`".concat(path, "`). ") + "To fix this, supply a path using one of the following formats: ".concat(exampleUrls.join(" or ")));
+  throw new RuntimeError(2959, ngDevMode && `Image loader has detected an invalid path (\`${path}\`). To fix this, supply a path using one of the following formats: ${exampleUrls.join(" or ")}`);
 }
 function throwUnexpectedAbsoluteUrlError(path, url) {
-  throw new RuntimeError(2959, ngDevMode && "Image loader has detected a `<img>` tag with an invalid `ngSrc` attribute: ".concat(url, ". ") + "This image loader expects `ngSrc` to be a relative URL - however the provided value is an absolute URL. To fix this, provide `ngSrc` as a path relative to the base URL " + "configured for this loader (`".concat(path, "`)."));
+  throw new RuntimeError(2959, ngDevMode && `Image loader has detected a \`<img>\` tag with an invalid \`ngSrc\` attribute: ${url}. This image loader expects \`ngSrc\` to be a relative URL - however the provided value is an absolute URL. To fix this, provide \`ngSrc\` as a path relative to the base URL configured for this loader (\`${path}\`).`);
 }
 var provideCloudflareLoader = createImageLoader(createCloudflareUrl, ngDevMode ? ["https://<ZONE>/cdn-cgi/image/<OPTIONS>/<SOURCE-IMAGE>"] : void 0);
 function createCloudflareUrl(path, config) {
-  let params = "format=auto";
+  let params = `format=auto`;
   if (config.width) {
-    params += ",width=".concat(config.width);
+    params += `,width=${config.width}`;
   }
-  return "".concat(path, "/cdn-cgi/image/").concat(params, "/").concat(config.src);
+  return `${path}/cdn-cgi/image/${params}/${config.src}`;
 }
 var cloudinaryLoaderInfo = {
   name: "Cloudinary",
@@ -3851,11 +3837,11 @@ function isCloudinaryUrl(url) {
 }
 var provideCloudinaryLoader = createImageLoader(createCloudinaryUrl, ngDevMode ? ["https://res.cloudinary.com/mysite", "https://mysite.cloudinary.com", "https://subdomain.mysite.com"] : void 0);
 function createCloudinaryUrl(path, config) {
-  let params = "f_auto,q_auto";
+  let params = `f_auto,q_auto`;
   if (config.width) {
-    params += ",w_".concat(config.width);
+    params += `,w_${config.width}`;
   }
-  return "".concat(path, "/image/upload/").concat(params, "/").concat(config.src);
+  return `${path}/image/upload/${params}/${config.src}`;
 }
 var imageKitLoaderInfo = {
   name: "ImageKit",
@@ -3873,7 +3859,7 @@ function createImagekitUrl(path, config) {
   } = config;
   let urlSegments;
   if (width) {
-    const params = "tr:w-".concat(width);
+    const params = `tr:w-${width}`;
     urlSegments = [path, params, src];
   } else {
     urlSegments = [path, src];
@@ -3890,7 +3876,7 @@ function isImgixUrl(url) {
 }
 var provideImgixLoader = createImageLoader(createImgixUrl, ngDevMode ? ["https://somepath.imgix.net/"] : void 0);
 function createImgixUrl(path, config) {
-  const url = new URL("".concat(path, "/").concat(config.src));
+  const url = new URL(`${path}/${config.src}`);
   url.searchParams.set("auto", "format");
   if (config.width) {
     url.searchParams.set("w", config.width.toString());
@@ -3898,12 +3884,12 @@ function createImgixUrl(path, config) {
   return url.href;
 }
 function imgDirectiveDetails(ngSrc, includeNgSrc = true) {
-  const ngSrcInfo = includeNgSrc ? '(activated on an <img> element with the `ngSrc="'.concat(ngSrc, '"`) ') : "";
-  return "The NgOptimizedImage directive ".concat(ngSrcInfo, "has detected that");
+  const ngSrcInfo = includeNgSrc ? `(activated on an <img> element with the \`ngSrc="${ngSrc}"\`) ` : "";
+  return `The NgOptimizedImage directive ${ngSrcInfo}has detected that`;
 }
 function assertDevMode(checkName) {
   if (!ngDevMode) {
-    throw new RuntimeError(2958, "Unexpected invocation of the ".concat(checkName, " in the prod mode. ") + "Please make sure that the prod mode is enabled for production builds.");
+    throw new RuntimeError(2958, `Unexpected invocation of the ${checkName} in the prod mode. Please make sure that the prod mode is enabled for production builds.`);
   }
 }
 var _LCPImageObserver = class _LCPImageObserver {
@@ -3924,12 +3910,11 @@ var _LCPImageObserver = class _LCPImageObserver {
    */
   initPerformanceObserver() {
     const observer = new PerformanceObserver((entryList) => {
-      var _a, _b;
       const entries = entryList.getEntries();
       if (entries.length === 0)
         return;
       const lcpElement = entries[entries.length - 1];
-      const imgSrc = (_b = (_a = lcpElement.element) == null ? void 0 : _a.src) != null ? _b : "";
+      const imgSrc = lcpElement.element?.src ?? "";
       if (imgSrc.startsWith("data:") || imgSrc.startsWith("blob:"))
         return;
       const img = this.images.get(imgSrc);
@@ -4001,11 +3986,11 @@ var LCPImageObserver = _LCPImageObserver;
 })();
 function logMissingPriorityError(ngSrc) {
   const directiveDetails = imgDirectiveDetails(ngSrc);
-  console.error(formatRuntimeError(2955, "".concat(directiveDetails, " this image is the Largest Contentful Paint (LCP) ") + 'element but was not marked "priority". This image should be marked "priority" in order to prioritize its loading. To fix this, add the "priority" attribute.'));
+  console.error(formatRuntimeError(2955, `${directiveDetails} this image is the Largest Contentful Paint (LCP) element but was not marked "priority". This image should be marked "priority" in order to prioritize its loading. To fix this, add the "priority" attribute.`));
 }
 function logModifiedWarning(ngSrc) {
   const directiveDetails = imgDirectiveDetails(ngSrc);
-  console.warn(formatRuntimeError(2964, "".concat(directiveDetails, " this image is the Largest Contentful Paint (LCP) ") + 'element and has had its "ngSrc" attribute modified. This can cause slower loading performance. It is recommended not to modify the "ngSrc" property on any image which could be the LCP element.'));
+  console.warn(formatRuntimeError(2964, `${directiveDetails} this image is the Largest Contentful Paint (LCP) element and has had its "ngSrc" attribute modified. This can cause slower loading performance. It is recommended not to modify the "ngSrc" property on any image which could be the LCP element.`));
 }
 var INTERNAL_PRECONNECT_CHECK_BLOCKLIST = /* @__PURE__ */ new Set(["localhost", "127.0.0.1", "0.0.0.0"]);
 var PRECONNECT_CHECK_BLOCKLIST = new InjectionToken(ngDevMode ? "PRECONNECT_CHECK_BLOCKLIST" : "");
@@ -4045,16 +4030,16 @@ var _PreconnectLinkChecker = class _PreconnectLinkChecker {
    * @param originalNgSrc ngSrc value
    */
   assertPreconnect(rewrittenSrc, originalNgSrc) {
-    var _a;
     if (!this.window)
       return;
     const imgUrl = getUrl(rewrittenSrc, this.window);
     if (this.blocklist.has(imgUrl.hostname) || this.alreadySeen.has(imgUrl.origin))
       return;
     this.alreadySeen.add(imgUrl.origin);
-    (_a = this.preconnectLinks) != null ? _a : this.preconnectLinks = this.queryPreconnectLinks();
+    this.preconnectLinks ??= this.queryPreconnectLinks();
     if (!this.preconnectLinks.has(imgUrl.origin)) {
-      console.warn(formatRuntimeError(2956, "".concat(imgDirectiveDetails(originalNgSrc), " there is no preconnect tag present for this ") + "image. Preconnecting to the origin(s) that serve priority images ensures that these images are delivered as soon as possible. To fix this, please add the following element into the <head> of the document:\n" + '  <link rel="preconnect" href="'.concat(imgUrl.origin, '">')));
+      console.warn(formatRuntimeError(2956, `${imgDirectiveDetails(originalNgSrc)} there is no preconnect tag present for this image. Preconnecting to the origin(s) that serve priority images ensures that these images are delivered as soon as possible. To fix this, please add the following element into the <head> of the document:
+  <link rel="preconnect" href="${imgUrl.origin}">`));
     }
   }
   queryPreconnectLinks() {
@@ -4068,8 +4053,7 @@ var _PreconnectLinkChecker = class _PreconnectLinkChecker {
     return preconnectUrls;
   }
   ngOnDestroy() {
-    var _a;
-    (_a = this.preconnectLinks) == null ? void 0 : _a.clear();
+    this.preconnectLinks?.clear();
     this.alreadySeen.clear();
   }
 };
@@ -4124,7 +4108,7 @@ var _PreloadLinkCreator = class _PreloadLinkCreator {
   createPreloadLinkTag(renderer, src, srcset, sizes) {
     if (ngDevMode) {
       if (this.preloadedImages.size >= DEFAULT_PRELOADED_IMAGES_LIMIT) {
-        throw new RuntimeError(2961, ngDevMode && "The `NgOptimizedImage` directive has detected that more than " + "".concat(DEFAULT_PRELOADED_IMAGES_LIMIT, " images were marked as priority. ") + 'This might negatively affect an overall performance of the page. To fix this, remove the "priority" attribute from images with less priority.');
+        throw new RuntimeError(2961, ngDevMode && `The \`NgOptimizedImage\` directive has detected that more than ${DEFAULT_PRELOADED_IMAGES_LIMIT} images were marked as priority. This might negatively affect an overall performance of the page. To fix this, remove the "priority" attribute from images with less priority.`);
       }
     }
     if (this.preloadedImages.has(src)) {
@@ -4237,7 +4221,7 @@ var _NgOptimizedImage = class _NgOptimizedImage {
   }
   setHostAttributes() {
     if (this.fill) {
-      this.sizes || (this.sizes = "100vw");
+      this.sizes ||= "100vw";
     } else {
       this.setHostAttribute("width", this.width.toString());
       this.setHostAttribute("height", this.height.toString());
@@ -4265,8 +4249,7 @@ var _NgOptimizedImage = class _NgOptimizedImage {
       if (this.lcpObserver !== null && oldSrc && newSrc && oldSrc !== newSrc) {
         const ngZone = this.injector.get(NgZone);
         ngZone.runOutsideAngular(() => {
-          var _a;
-          (_a = this.lcpObserver) == null ? void 0 : _a.updateImage(oldSrc, newSrc);
+          this.lcpObserver?.updateImage(oldSrc, newSrc);
         });
       }
     }
@@ -4301,10 +4284,10 @@ var _NgOptimizedImage = class _NgOptimizedImage {
     const finalSrcs = this.ngSrcset.split(",").filter((src) => src !== "").map((srcStr) => {
       srcStr = srcStr.trim();
       const width = widthSrcSet ? parseFloat(srcStr) : parseFloat(srcStr) * this.width;
-      return "".concat(this.callImageLoader({
+      return `${this.callImageLoader({
         src: this.ngSrc,
         width
-      }), " ").concat(srcStr);
+      })} ${srcStr}`;
     });
     return finalSrcs.join(", ");
   }
@@ -4316,18 +4299,17 @@ var _NgOptimizedImage = class _NgOptimizedImage {
     }
   }
   getResponsiveSrcset() {
-    var _a;
     const {
       breakpoints
     } = this.config;
     let filteredBreakpoints = breakpoints;
-    if (((_a = this.sizes) == null ? void 0 : _a.trim()) === "100vw") {
+    if (this.sizes?.trim() === "100vw") {
       filteredBreakpoints = breakpoints.filter((bp) => bp >= VIEWPORT_BREAKPOINT_CUTOFF);
     }
-    const finalSrcs = filteredBreakpoints.map((bp) => "".concat(this.callImageLoader({
+    const finalSrcs = filteredBreakpoints.map((bp) => `${this.callImageLoader({
       src: this.ngSrc,
       width: bp
-    }), " ").concat(bp, "w"));
+    })} ${bp}w`);
     return finalSrcs.join(", ");
   }
   updateSrcAndSrcset(forceSrcRecalc = false) {
@@ -4348,10 +4330,10 @@ var _NgOptimizedImage = class _NgOptimizedImage {
     return rewrittenSrcset;
   }
   getFixedSrcset() {
-    const finalSrcs = DENSITY_SRCSET_MULTIPLIERS.map((multiplier) => "".concat(this.callImageLoader({
+    const finalSrcs = DENSITY_SRCSET_MULTIPLIERS.map((multiplier) => `${this.callImageLoader({
       src: this.ngSrc,
       width: this.width * multiplier
-    }), " ").concat(multiplier, "x"));
+    })} ${multiplier}x`);
     return finalSrcs.join(", ");
   }
   shouldGenerateAutomaticSrcset() {
@@ -4483,12 +4465,12 @@ function processConfig(config) {
 }
 function assertNoConflictingSrc(dir) {
   if (dir.src) {
-    throw new RuntimeError(2950, "".concat(imgDirectiveDetails(dir.ngSrc), " both `src` and `ngSrc` have been set. ") + "Supplying both of these attributes breaks lazy loading. The NgOptimizedImage directive sets `src` itself based on the value of `ngSrc`. To fix this, please remove the `src` attribute.");
+    throw new RuntimeError(2950, `${imgDirectiveDetails(dir.ngSrc)} both \`src\` and \`ngSrc\` have been set. Supplying both of these attributes breaks lazy loading. The NgOptimizedImage directive sets \`src\` itself based on the value of \`ngSrc\`. To fix this, please remove the \`src\` attribute.`);
   }
 }
 function assertNoConflictingSrcset(dir) {
   if (dir.srcset) {
-    throw new RuntimeError(2951, "".concat(imgDirectiveDetails(dir.ngSrc), " both `srcset` and `ngSrcset` have been set. ") + "Supplying both of these attributes breaks lazy loading. The NgOptimizedImage directive sets `srcset` itself based on the value of `ngSrcset`. To fix this, please remove the `srcset` attribute.");
+    throw new RuntimeError(2951, `${imgDirectiveDetails(dir.ngSrc)} both \`srcset\` and \`ngSrcset\` have been set. Supplying both of these attributes breaks lazy loading. The NgOptimizedImage directive sets \`srcset\` itself based on the value of \`ngSrcset\`. To fix this, please remove the \`srcset\` attribute.`);
   }
 }
 function assertNotBase64Image(dir) {
@@ -4497,26 +4479,26 @@ function assertNotBase64Image(dir) {
     if (ngSrc.length > BASE64_IMG_MAX_LENGTH_IN_ERROR) {
       ngSrc = ngSrc.substring(0, BASE64_IMG_MAX_LENGTH_IN_ERROR) + "...";
     }
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc, false), " `ngSrc` is a Base64-encoded string ") + "(".concat(ngSrc, "). NgOptimizedImage does not support Base64-encoded strings. ") + "To fix this, disable the NgOptimizedImage directive for this element by removing `ngSrc` and using a standard `src` attribute instead.");
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc, false)} \`ngSrc\` is a Base64-encoded string (${ngSrc}). NgOptimizedImage does not support Base64-encoded strings. To fix this, disable the NgOptimizedImage directive for this element by removing \`ngSrc\` and using a standard \`src\` attribute instead.`);
   }
 }
 function assertNoComplexSizes(dir) {
   let sizes = dir.sizes;
-  if (sizes == null ? void 0 : sizes.match(/((\)|,)\s|^)\d+px/)) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc, false), " `sizes` was set to a string including ") + 'pixel values. For automatic `srcset` generation, `sizes` must only include responsive values, such as `sizes="50vw"` or `sizes="(min-width: 768px) 50vw, 100vw"`. To fix this, modify the `sizes` attribute, or provide your own `ngSrcset` value directly.');
+  if (sizes?.match(/((\)|,)\s|^)\d+px/)) {
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc, false)} \`sizes\` was set to a string including pixel values. For automatic \`srcset\` generation, \`sizes\` must only include responsive values, such as \`sizes="50vw"\` or \`sizes="(min-width: 768px) 50vw, 100vw"\`. To fix this, modify the \`sizes\` attribute, or provide your own \`ngSrcset\` value directly.`);
   }
 }
 function assertNotBlobUrl(dir) {
   const ngSrc = dir.ngSrc.trim();
   if (ngSrc.startsWith("blob:")) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " `ngSrc` was set to a blob URL (").concat(ngSrc, "). ") + "Blob URLs are not supported by the NgOptimizedImage directive. To fix this, disable the NgOptimizedImage directive for this element by removing `ngSrc` and using a regular `src` attribute instead.");
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} \`ngSrc\` was set to a blob URL (${ngSrc}). Blob URLs are not supported by the NgOptimizedImage directive. To fix this, disable the NgOptimizedImage directive for this element by removing \`ngSrc\` and using a regular \`src\` attribute instead.`);
   }
 }
 function assertNonEmptyInput(dir, name, value) {
   const isString = typeof value === "string";
   const isEmptyString = isString && value.trim() === "";
   if (!isString || isEmptyString) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " `").concat(name, "` has an invalid value ") + "(`".concat(value, "`). To fix this, change the value to a non-empty string."));
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} \`${name}\` has an invalid value (\`${value}\`). To fix this, change the value to a non-empty string.`);
   }
 }
 function assertValidNgSrcset(dir, value) {
@@ -4531,23 +4513,23 @@ function assertValidNgSrcset(dir, value) {
   }
   const isValidSrcset = isValidWidthDescriptor || isValidDensityDescriptor;
   if (!isValidSrcset) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " `ngSrcset` has an invalid value (`").concat(value, "`). ") + 'To fix this, supply `ngSrcset` using a comma-separated list of one or more width descriptors (e.g. "100w, 200w") or density descriptors (e.g. "1x, 2x").');
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} \`ngSrcset\` has an invalid value (\`${value}\`). To fix this, supply \`ngSrcset\` using a comma-separated list of one or more width descriptors (e.g. "100w, 200w") or density descriptors (e.g. "1x, 2x").`);
   }
 }
 function assertUnderDensityCap(dir, value) {
   const underDensityCap = value.split(",").every((num) => num === "" || parseFloat(num) <= ABSOLUTE_SRCSET_DENSITY_CAP);
   if (!underDensityCap) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " the `ngSrcset` contains an unsupported image density:") + "`".concat(value, "`. NgOptimizedImage generally recommends a max image density of ") + "".concat(RECOMMENDED_SRCSET_DENSITY_CAP, "x but supports image densities up to ") + "".concat(ABSOLUTE_SRCSET_DENSITY_CAP, "x. The human eye cannot distinguish between image densities ") + "greater than ".concat(RECOMMENDED_SRCSET_DENSITY_CAP, "x - which makes them unnecessary for ") + "most use cases. Images that will be pinch-zoomed are typically the primary use case for " + "".concat(ABSOLUTE_SRCSET_DENSITY_CAP, "x images. Please remove the high density descriptor and try again."));
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the \`ngSrcset\` contains an unsupported image density:\`${value}\`. NgOptimizedImage generally recommends a max image density of ${RECOMMENDED_SRCSET_DENSITY_CAP}x but supports image densities up to ${ABSOLUTE_SRCSET_DENSITY_CAP}x. The human eye cannot distinguish between image densities greater than ${RECOMMENDED_SRCSET_DENSITY_CAP}x - which makes them unnecessary for most use cases. Images that will be pinch-zoomed are typically the primary use case for ${ABSOLUTE_SRCSET_DENSITY_CAP}x images. Please remove the high density descriptor and try again.`);
   }
 }
 function postInitInputChangeError(dir, inputName) {
   let reason;
   if (inputName === "width" || inputName === "height") {
-    reason = "Changing `".concat(inputName, "` may result in different attribute value ") + "applied to the underlying image element and cause layout shifts on a page.";
+    reason = `Changing \`${inputName}\` may result in different attribute value applied to the underlying image element and cause layout shifts on a page.`;
   } else {
-    reason = "Changing the `".concat(inputName, "` would have no effect on the underlying ") + "image element, because the resource loading has already occurred.";
+    reason = `Changing the \`${inputName}\` would have no effect on the underlying image element, because the resource loading has already occurred.`;
   }
-  return new RuntimeError(2953, "".concat(imgDirectiveDetails(dir.ngSrc), " `").concat(inputName, "` was updated after initialization. ") + "The NgOptimizedImage directive will not react to this input change. ".concat(reason, " ") + "To fix this, either switch `".concat(inputName, "` to a static value ") + "or wrap the image element in an *ngIf that is gated on the necessary value.");
+  return new RuntimeError(2953, `${imgDirectiveDetails(dir.ngSrc)} \`${inputName}\` was updated after initialization. The NgOptimizedImage directive will not react to this input change. ${reason} To fix this, either switch \`${inputName}\` to a static value or wrap the image element in an *ngIf that is gated on the necessary value.`);
 }
 function assertNoPostInitInputChange(dir, changes, inputs) {
   inputs.forEach((input) => {
@@ -4566,7 +4548,7 @@ function assertGreaterThanZero(dir, inputValue, inputName) {
   const validNumber = typeof inputValue === "number" && inputValue > 0;
   const validString = typeof inputValue === "string" && /^\d+$/.test(inputValue.trim()) && parseInt(inputValue) > 0;
   if (!validNumber && !validString) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " `").concat(inputName, "` has an invalid value. ") + "To fix this, provide `".concat(inputName, "` as a number greater than 0."));
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} \`${inputName}\` has an invalid value. To fix this, provide \`${inputName}\` as a number greater than 0.`);
   }
 }
 function assertNoImageDistortion(dir, img, renderer) {
@@ -4596,16 +4578,26 @@ function assertNoImageDistortion(dir, img, renderer) {
     const inaccurateDimensions = Math.abs(suppliedAspectRatio - intrinsicAspectRatio) > ASPECT_RATIO_TOLERANCE;
     const stylingDistortion = nonZeroRenderedDimensions && Math.abs(intrinsicAspectRatio - renderedAspectRatio) > ASPECT_RATIO_TOLERANCE;
     if (inaccurateDimensions) {
-      console.warn(formatRuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " the aspect ratio of the image does not match ") + "the aspect ratio indicated by the width and height attributes. " + "\nIntrinsic image size: ".concat(intrinsicWidth, "w x ").concat(intrinsicHeight, "h ") + "(aspect-ratio: ".concat(round(intrinsicAspectRatio), "). \nSupplied width and height attributes: ") + "".concat(suppliedWidth, "w x ").concat(suppliedHeight, "h (aspect-ratio: ").concat(round(suppliedAspectRatio), "). ") + "\nTo fix this, update the width and height attributes."));
+      console.warn(formatRuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the aspect ratio of the image does not match the aspect ratio indicated by the width and height attributes. 
+Intrinsic image size: ${intrinsicWidth}w x ${intrinsicHeight}h (aspect-ratio: ${round(intrinsicAspectRatio)}). 
+Supplied width and height attributes: ${suppliedWidth}w x ${suppliedHeight}h (aspect-ratio: ${round(suppliedAspectRatio)}). 
+To fix this, update the width and height attributes.`));
     } else if (stylingDistortion) {
-      console.warn(formatRuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " the aspect ratio of the rendered image ") + "does not match the image's intrinsic aspect ratio. " + "\nIntrinsic image size: ".concat(intrinsicWidth, "w x ").concat(intrinsicHeight, "h ") + "(aspect-ratio: ".concat(round(intrinsicAspectRatio), "). \nRendered image size: ") + "".concat(renderedWidth, "w x ").concat(renderedHeight, "h (aspect-ratio: ") + "".concat(round(renderedAspectRatio), '). \nThis issue can occur if "width" and "height" ') + 'attributes are added to an image without updating the corresponding image styling. To fix this, adjust image styling. In most cases, adding "height: auto" or "width: auto" to the image styling will fix this issue.'));
+      console.warn(formatRuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the aspect ratio of the rendered image does not match the image's intrinsic aspect ratio. 
+Intrinsic image size: ${intrinsicWidth}w x ${intrinsicHeight}h (aspect-ratio: ${round(intrinsicAspectRatio)}). 
+Rendered image size: ${renderedWidth}w x ${renderedHeight}h (aspect-ratio: ${round(renderedAspectRatio)}). 
+This issue can occur if "width" and "height" attributes are added to an image without updating the corresponding image styling. To fix this, adjust image styling. In most cases, adding "height: auto" or "width: auto" to the image styling will fix this issue.`));
     } else if (!dir.ngSrcset && nonZeroRenderedDimensions) {
       const recommendedWidth = RECOMMENDED_SRCSET_DENSITY_CAP * renderedWidth;
       const recommendedHeight = RECOMMENDED_SRCSET_DENSITY_CAP * renderedHeight;
       const oversizedWidth = intrinsicWidth - recommendedWidth >= OVERSIZED_IMAGE_TOLERANCE;
       const oversizedHeight = intrinsicHeight - recommendedHeight >= OVERSIZED_IMAGE_TOLERANCE;
       if (oversizedWidth || oversizedHeight) {
-        console.warn(formatRuntimeError(2960, "".concat(imgDirectiveDetails(dir.ngSrc), " the intrinsic image is significantly ") + "larger than necessary. " + "\nRendered image size: ".concat(renderedWidth, "w x ").concat(renderedHeight, "h. ") + "\nIntrinsic image size: ".concat(intrinsicWidth, "w x ").concat(intrinsicHeight, "h. ") + "\nRecommended intrinsic image size: ".concat(recommendedWidth, "w x ").concat(recommendedHeight, "h. ") + "\nNote: Recommended intrinsic image size is calculated assuming a maximum DPR of " + "".concat(RECOMMENDED_SRCSET_DENSITY_CAP, ". To improve loading time, resize the image ") + 'or consider using the "ngSrcset" and "sizes" attributes.'));
+        console.warn(formatRuntimeError(2960, `${imgDirectiveDetails(dir.ngSrc)} the intrinsic image is significantly larger than necessary. 
+Rendered image size: ${renderedWidth}w x ${renderedHeight}h. 
+Intrinsic image size: ${intrinsicWidth}w x ${intrinsicHeight}h. 
+Recommended intrinsic image size: ${recommendedWidth}w x ${recommendedHeight}h. 
+Note: Recommended intrinsic image size is calculated assuming a maximum DPR of ${RECOMMENDED_SRCSET_DENSITY_CAP}. To improve loading time, resize the image or consider using the "ngSrcset" and "sizes" attributes.`));
       }
     }
   });
@@ -4621,12 +4613,12 @@ function assertNonEmptyWidthAndHeight(dir) {
   if (dir.height === void 0)
     missingAttributes.push("height");
   if (missingAttributes.length > 0) {
-    throw new RuntimeError(2954, "".concat(imgDirectiveDetails(dir.ngSrc), " these required attributes ") + "are missing: ".concat(missingAttributes.map((attr) => '"'.concat(attr, '"')).join(", "), ". ") + 'Including "width" and "height" attributes will prevent image-related layout shifts. To fix this, include "width" and "height" attributes on the image tag or turn on "fill" mode with the `fill` attribute.');
+    throw new RuntimeError(2954, `${imgDirectiveDetails(dir.ngSrc)} these required attributes are missing: ${missingAttributes.map((attr) => `"${attr}"`).join(", ")}. Including "width" and "height" attributes will prevent image-related layout shifts. To fix this, include "width" and "height" attributes on the image tag or turn on "fill" mode with the \`fill\` attribute.`);
   }
 }
 function assertEmptyWidthAndHeight(dir) {
   if (dir.width || dir.height) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " the attributes `height` and/or `width` are present ") + "along with the `fill` attribute. Because `fill` mode causes an image to fill its containing element, the size attributes have no effect and should be removed.");
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the attributes \`height\` and/or \`width\` are present along with the \`fill\` attribute. Because \`fill\` mode causes an image to fill its containing element, the size attributes have no effect and should be removed.`);
   }
 }
 function assertNonZeroRenderedHeight(dir, img, renderer) {
@@ -4635,7 +4627,7 @@ function assertNonZeroRenderedHeight(dir, img, renderer) {
     removeErrorListenerFn();
     const renderedHeight = img.clientHeight;
     if (dir.fill && renderedHeight === 0) {
-      console.warn(formatRuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " the height of the fill-mode image is zero. ") + 'This is likely because the containing element does not have the CSS \'position\' property set to one of the following: "relative", "fixed", or "absolute". To fix this problem, make sure the container element has the CSS \'position\' property defined and the height of the element is not zero.'));
+      console.warn(formatRuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the height of the fill-mode image is zero. This is likely because the containing element does not have the CSS 'position' property set to one of the following: "relative", "fixed", or "absolute". To fix this problem, make sure the container element has the CSS 'position' property defined and the height of the element is not zero.`));
     }
   });
   const removeErrorListenerFn = renderer.listen(img, "error", () => {
@@ -4645,11 +4637,11 @@ function assertNonZeroRenderedHeight(dir, img, renderer) {
 }
 function assertValidLoadingInput(dir) {
   if (dir.loading && dir.priority) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " the `loading` attribute ") + 'was used on an image that was marked "priority". Setting `loading` on priority images is not allowed because these images will always be eagerly loaded. To fix this, remove the “loading” attribute from the priority image.');
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the \`loading\` attribute was used on an image that was marked "priority". Setting \`loading\` on priority images is not allowed because these images will always be eagerly loaded. To fix this, remove the “loading” attribute from the priority image.`);
   }
   const validInputs = ["auto", "eager", "lazy"];
   if (typeof dir.loading === "string" && !validInputs.includes(dir.loading)) {
-    throw new RuntimeError(2952, "".concat(imgDirectiveDetails(dir.ngSrc), " the `loading` attribute ") + "has an invalid value (`".concat(dir.loading, "`). ") + 'To fix this, provide a valid value ("lazy", "eager", or "auto").');
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the \`loading\` attribute has an invalid value (\`${dir.loading}\`). To fix this, provide a valid value ("lazy", "eager", or "auto").`);
   }
 }
 function assertNotMissingBuiltInLoader(ngSrc, imageLoader) {
@@ -4662,18 +4654,18 @@ function assertNotMissingBuiltInLoader(ngSrc, imageLoader) {
       }
     }
     if (builtInLoaderName) {
-      console.warn(formatRuntimeError(2962, "NgOptimizedImage: It looks like your images may be hosted on the " + "".concat(builtInLoaderName, " CDN, but your app is not using Angular's ") + "built-in loader for that CDN. We recommend switching to use " + "the built-in by calling `provide".concat(builtInLoaderName, "Loader()` ") + "in your `providers` and passing it your instance's base URL. If you don't want to use the built-in loader, define a custom loader function using IMAGE_LOADER to silence this warning."));
+      console.warn(formatRuntimeError(2962, `NgOptimizedImage: It looks like your images may be hosted on the ${builtInLoaderName} CDN, but your app is not using Angular's built-in loader for that CDN. We recommend switching to use the built-in by calling \`provide${builtInLoaderName}Loader()\` in your \`providers\` and passing it your instance's base URL. If you don't want to use the built-in loader, define a custom loader function using IMAGE_LOADER to silence this warning.`));
     }
   }
 }
 function assertNoNgSrcsetWithoutLoader(dir, imageLoader) {
   if (dir.ngSrcset && imageLoader === noopImageLoader) {
-    console.warn(formatRuntimeError(2963, "".concat(imgDirectiveDetails(dir.ngSrc), " the `ngSrcset` attribute is present but ") + "no image loader is configured (i.e. the default one is being used), which would result in the same image being used for all configured sizes. To fix this, provide a loader or remove the `ngSrcset` attribute from the image."));
+    console.warn(formatRuntimeError(2963, `${imgDirectiveDetails(dir.ngSrc)} the \`ngSrcset\` attribute is present but no image loader is configured (i.e. the default one is being used), which would result in the same image being used for all configured sizes. To fix this, provide a loader or remove the \`ngSrcset\` attribute from the image.`));
   }
 }
 function assertNoLoaderParamsWithoutLoader(dir, imageLoader) {
   if (dir.loaderParams && imageLoader === noopImageLoader) {
-    console.warn(formatRuntimeError(2963, "".concat(imgDirectiveDetails(dir.ngSrc), " the `loaderParams` attribute is present but ") + "no image loader is configured (i.e. the default one is being used), which means that the loaderParams data will not be consumed and will not affect the URL. To fix this, provide a custom loader or remove the `loaderParams` attribute from the image."));
+    console.warn(formatRuntimeError(2963, `${imgDirectiveDetails(dir.ngSrc)} the \`loaderParams\` attribute is present but no image loader is configured (i.e. the default one is being used), which means that the loaderParams data will not be consumed and will not affect the URL. To fix this, provide a custom loader or remove the \`loaderParams\` attribute from the image.`));
   }
 }
 function round(input) {
@@ -4794,4 +4786,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-OCJ7TRHS.js.map
+//# sourceMappingURL=chunk-NCRJLOF7.js.map

@@ -8,7 +8,7 @@ import {
   isPlatformServer,
   parseCookieValue,
   setRootDomAdapter
-} from "./chunk-OCJ7TRHS.js";
+} from "./chunk-NCRJLOF7.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   APP_ID,
@@ -84,7 +84,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-2NCJZ5ME.js";
+} from "./chunk-BDK72RLS.js";
 
 // node_modules/@angular/common/fesm2022/http.mjs
 var HttpHandler = class {
@@ -311,7 +311,7 @@ var HttpHeaders = class _HttpHeaders {
 function assertValidHeaders(headers) {
   for (const [key, value] of Object.entries(headers)) {
     if (!(typeof value === "string" || typeof value === "number") && !Array.isArray(value)) {
-      throw new Error("Unexpected value of the `".concat(key, "` header provided. ") + "Expecting either a string, a number or an array, but got: `".concat(value, "`."));
+      throw new Error(`Unexpected value of the \`${key}\` header provided. Expecting either a string, a number or an array, but got: \`${value}\`.`);
     }
   }
 }
@@ -375,13 +375,10 @@ var STANDARD_ENCODING_REPLACEMENTS = {
   "2F": "/"
 };
 function standardEncoding(v) {
-  return encodeURIComponent(v).replace(STANDARD_ENCODING_REGEX, (s, t) => {
-    var _a;
-    return (_a = STANDARD_ENCODING_REPLACEMENTS[t]) != null ? _a : s;
-  });
+  return encodeURIComponent(v).replace(STANDARD_ENCODING_REGEX, (s, t) => STANDARD_ENCODING_REPLACEMENTS[t] ?? s);
 }
 function valueToString(value) {
-  return "".concat(value);
+  return `${value}`;
 }
 var HttpParams = class _HttpParams {
   constructor(options = {}) {
@@ -390,7 +387,7 @@ var HttpParams = class _HttpParams {
     this.encoder = options.encoder || new HttpUrlEncodingCodec();
     if (!!options.fromString) {
       if (!!options.fromObject) {
-        throw new Error("Cannot specify both fromString and fromObject.");
+        throw new Error(`Cannot specify both fromString and fromObject.`);
       }
       this.map = paramParser(options.fromString, this.encoder);
     } else if (!!options.fromObject) {
@@ -649,7 +646,6 @@ function isUrlSearchParams(value) {
 }
 var HttpRequest = class _HttpRequest {
   constructor(method, url, third, fourth) {
-    var _a, _b;
     this.url = url;
     this.body = null;
     this.reportProgress = false;
@@ -680,8 +676,8 @@ var HttpRequest = class _HttpRequest {
       }
       this.transferCache = options.transferCache;
     }
-    (_a = this.headers) != null ? _a : this.headers = new HttpHeaders();
-    (_b = this.context) != null ? _b : this.context = new HttpContext();
+    this.headers ??= new HttpHeaders();
+    this.context ??= new HttpContext();
     if (!this.params) {
       this.params = new HttpParams();
       this.urlWithParams = url;
@@ -746,7 +742,6 @@ var HttpRequest = class _HttpRequest {
     return null;
   }
   clone(update = {}) {
-    var _a;
     const method = update.method || this.method;
     const url = update.url || this.url;
     const responseType = update.responseType || this.responseType;
@@ -755,7 +750,7 @@ var HttpRequest = class _HttpRequest {
     const reportProgress = update.reportProgress !== void 0 ? update.reportProgress : this.reportProgress;
     let headers = update.headers || this.headers;
     let params = update.params || this.params;
-    const context = (_a = update.context) != null ? _a : this.context;
+    const context = update.context ?? this.context;
     if (update.setHeaders !== void 0) {
       headers = Object.keys(update.setHeaders).reduce((headers2, name) => headers2.set(name, update.setHeaders[name]), headers);
     }
@@ -842,9 +837,9 @@ var HttpErrorResponse = class extends HttpResponseBase {
     this.name = "HttpErrorResponse";
     this.ok = false;
     if (this.status >= 200 && this.status < 300) {
-      this.message = "Http failure during parsing for ".concat(init.url || "(unknown url)");
+      this.message = `Http failure during parsing for ${init.url || "(unknown url)"}`;
     } else {
-      this.message = "Http failure response for ".concat(init.url || "(unknown url)", ": ").concat(init.status, " ").concat(init.statusText);
+      this.message = `Http failure response for ${init.url || "(unknown url)"}: ${init.status} ${init.statusText}`;
     }
     this.error = init.error || null;
   }
@@ -1026,7 +1021,7 @@ var _HttpClient = class _HttpClient {
       case "response":
         return res$;
       default:
-        throw new Error("Unreachable: unhandled observe type ".concat(options.observe, "}"));
+        throw new Error(`Unreachable: unhandled observe type ${options.observe}}`);
     }
   }
   /**
@@ -1137,7 +1132,7 @@ var HttpClient = _HttpClient;
   }], null);
 })();
 var XSSI_PREFIX$1 = /^\)\]\}',?\n/;
-var REQUEST_URL_HEADER = "X-Request-URL";
+var REQUEST_URL_HEADER = `X-Request-URL`;
 function getResponseUrl$1(response) {
   if (response.url) {
     return response.url;
@@ -1147,10 +1142,9 @@ function getResponseUrl$1(response) {
 }
 var _FetchBackend = class _FetchBackend {
   constructor() {
-    var _a, _b;
-    this.fetchImpl = (_b = (_a = inject(FetchFactory, {
+    this.fetchImpl = inject(FetchFactory, {
       optional: true
-    })) == null ? void 0 : _a.fetch) != null ? _b : fetch.bind(globalThis);
+    })?.fetch ?? fetch.bind(globalThis);
     this.ngZone = inject(NgZone);
   }
   handle(request) {
@@ -1164,7 +1158,6 @@ var _FetchBackend = class _FetchBackend {
   }
   doRequest(request, signal, observer) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d;
       const init = this.createRequestInit(request);
       let response;
       try {
@@ -1179,7 +1172,7 @@ var _FetchBackend = class _FetchBackend {
       } catch (error) {
         observer.error(new HttpErrorResponse({
           error,
-          status: (_a = error.status) != null ? _a : 0,
+          status: error.status ?? 0,
           statusText: error.statusText,
           url: request.urlWithParams,
           headers: error.headers
@@ -1188,7 +1181,7 @@ var _FetchBackend = class _FetchBackend {
       }
       const headers = new HttpHeaders(response.headers);
       const statusText = response.statusText;
-      const url = (_b = getResponseUrl$1(response)) != null ? _b : request.urlWithParams;
+      const url = getResponseUrl$1(response) ?? request.urlWithParams;
       let status = response.status;
       let body = null;
       if (request.reportProgress) {
@@ -1219,7 +1212,7 @@ var _FetchBackend = class _FetchBackend {
             chunks.push(value);
             receivedLength += value.length;
             if (request.reportProgress) {
-              partialText = request.responseType === "text" ? (partialText != null ? partialText : "") + (decoder != null ? decoder : decoder = new TextDecoder()).decode(value, {
+              partialText = request.responseType === "text" ? (partialText ?? "") + (decoder ??= new TextDecoder()).decode(value, {
                 stream: true
               }) : void 0;
               const reportProgress = () => observer.next({
@@ -1234,7 +1227,7 @@ var _FetchBackend = class _FetchBackend {
         }));
         const chunksAll = this.concatChunks(chunks, receivedLength);
         try {
-          const contentType = (_c = response.headers.get("Content-Type")) != null ? _c : "";
+          const contentType = response.headers.get("Content-Type") ?? "";
           body = this.parseBody(request, chunksAll, contentType);
         } catch (error) {
           observer.error(new HttpErrorResponse({
@@ -1242,7 +1235,7 @@ var _FetchBackend = class _FetchBackend {
             headers: new HttpHeaders(response.headers),
             status: response.status,
             statusText: response.statusText,
-            url: (_d = getResponseUrl$1(response)) != null ? _d : request.urlWithParams
+            url: getResponseUrl$1(response) ?? request.urlWithParams
           }));
           return;
         }
@@ -1287,11 +1280,10 @@ var _FetchBackend = class _FetchBackend {
     }
   }
   createRequestInit(req) {
-    var _a;
     const headers = {};
     const credentials = req.withCredentials ? "include" : void 0;
     req.headers.forEach((name, values) => headers[name] = values.join(","));
-    (_a = headers["Accept"]) != null ? _a : headers["Accept"] = "application/json, text/plain, */*";
+    headers["Accept"] ??= "application/json, text/plain, */*";
     if (!headers["Content-Type"]) {
       const detectedType = req.detectContentTypeHeader();
       if (detectedType !== null) {
@@ -1353,11 +1345,10 @@ var PRIMARY_HTTP_BACKEND = new InjectionToken(ngDevMode ? "PRIMARY_HTTP_BACKEND"
 function legacyInterceptorFnFactory() {
   let chain = null;
   return (req, handler) => {
-    var _a;
     if (chain === null) {
-      const interceptors = (_a = inject(HTTP_INTERCEPTORS, {
+      const interceptors = inject(HTTP_INTERCEPTORS, {
         optional: true
-      })) != null ? _a : [];
+      }) ?? [];
       chain = interceptors.reduceRight(adaptLegacyInterceptorToChain, interceptorChainEndFn);
     }
     const pendingTasks = inject(PendingTasks);
@@ -1376,7 +1367,7 @@ var _HttpInterceptorHandler = class _HttpInterceptorHandler extends HttpHandler 
     const primaryHttpBackend = inject(PRIMARY_HTTP_BACKEND, {
       optional: true
     });
-    this.backend = primaryHttpBackend != null ? primaryHttpBackend : backend;
+    this.backend = primaryHttpBackend ?? backend;
     if ((typeof ngDevMode === "undefined" || ngDevMode) && !fetchBackendWarningDisplayed) {
       const isServer = isPlatformServer(injector.get(PLATFORM_ID));
       if (isServer && !(this.backend instanceof FetchBackend)) {
@@ -1435,7 +1426,7 @@ var _JsonpClientBackend = class _JsonpClientBackend {
    * Get the name of the next callback method, by incrementing the global `nextRequestId`.
    */
   nextCallback() {
-    return "ng_jsonp_callback_".concat(nextRequestId++);
+    return `ng_jsonp_callback_${nextRequestId++}`;
   }
   /**
    * Processes a JSONP request and returns an event stream of the results.
@@ -1454,7 +1445,7 @@ var _JsonpClientBackend = class _JsonpClientBackend {
     }
     return new Observable((observer) => {
       const callback = this.nextCallback();
-      const url = req.urlWithParams.replace(/=JSONP_CALLBACK(&|$)/, "=".concat(callback, "$1"));
+      const url = req.urlWithParams.replace(/=JSONP_CALLBACK(&|$)/, `=${callback}$1`);
       const node = this.document.createElement("script");
       node.src = url;
       let body = null;
@@ -1515,7 +1506,7 @@ var _JsonpClientBackend = class _JsonpClientBackend {
     });
   }
   removeListeners(script) {
-    foreignDocument != null ? foreignDocument : foreignDocument = this.document.implementation.createHTMLDocument();
+    foreignDocument ??= this.document.implementation.createHTMLDocument();
     foreignDocument.adoptNode(script);
   }
 };
@@ -1597,7 +1588,7 @@ var _HttpXhrBackend = class _HttpXhrBackend {
    */
   handle(req) {
     if (req.method === "JSONP") {
-      throw new RuntimeError(-2800, (typeof ngDevMode === "undefined" || ngDevMode) && "Cannot make a JSONP request without JSONP support. To fix the problem, either add the `withJsonpSupport()` call (if `provideHttpClient()` is used) or import the `HttpClientJsonpModule` in the root NgModule.");
+      throw new RuntimeError(-2800, (typeof ngDevMode === "undefined" || ngDevMode) && `Cannot make a JSONP request without JSONP support. To fix the problem, either add the \`withJsonpSupport()\` call (if \`provideHttpClient()\` is used) or import the \`HttpClientJsonpModule\` in the root NgModule.`);
     }
     const xhrFactory = this.xhrFactory;
     const source = xhrFactory.ɵloadImpl ? from(xhrFactory.ɵloadImpl()) : of(null);
@@ -1901,7 +1892,7 @@ function provideHttpClient(...features) {
   if (ngDevMode) {
     const featureKinds = new Set(features.map((f) => f.ɵkind));
     if (featureKinds.has(HttpFeatureKind.NoXsrfProtection) && featureKinds.has(HttpFeatureKind.CustomXsrfConfiguration)) {
-      throw new Error(ngDevMode ? "Configuration error: found both withXsrfConfiguration() and withNoXsrfProtection() in the same call to provideHttpClient(), which is a contradiction." : "");
+      throw new Error(ngDevMode ? `Configuration error: found both withXsrfConfiguration() and withNoXsrfProtection() in the same call to provideHttpClient(), which is a contradiction.` : "");
     }
   }
   const providers = [HttpClient, HttpXhrBackend, HttpInterceptorHandler, {
@@ -2094,7 +2085,6 @@ var RESPONSE_TYPE = "rt";
 var CACHE_OPTIONS = new InjectionToken(ngDevMode ? "HTTP_TRANSFER_STATE_CACHE_OPTIONS" : "");
 var ALLOWED_METHODS = ["GET", "HEAD"];
 function transferCacheInterceptorFn(req, next) {
-  var _b;
   const _a = inject(CACHE_OPTIONS), {
     isCacheActive
   } = _a, globalOptions = __objRest(_a, [
@@ -2106,7 +2096,7 @@ function transferCacheInterceptorFn(req, next) {
   } = req;
   if (!isCacheActive || // POST requests are allowed either globally or at request level
   requestMethod === "POST" && !globalOptions.includePostRequests && !requestOptions || requestMethod !== "POST" && !ALLOWED_METHODS.includes(requestMethod) || requestOptions === false || //
-  ((_b = globalOptions.filter) == null ? void 0 : _b.call(globalOptions, req)) === false) {
+  globalOptions.filter?.(req) === false) {
     return next(req);
   }
   const transferState = inject(TransferState);
@@ -2136,7 +2126,7 @@ function transferCacheInterceptorFn(req, next) {
     }
     let headers = new HttpHeaders(httpHeaders);
     if (typeof ngDevMode === "undefined" || ngDevMode) {
-      headers = appendMissingHeadersDetection(req.url, headers, headersToInclude != null ? headersToInclude : []);
+      headers = appendMissingHeadersDetection(req.url, headers, headersToInclude ?? []);
     }
     return of(new HttpResponse({
       body,
@@ -2179,7 +2169,7 @@ function makeCacheKey(request) {
     responseType,
     url
   } = request;
-  const encodedParams = params.keys().sort().map((k) => "".concat(k, "=").concat(params.getAll(k))).join("&");
+  const encodedParams = params.keys().sort().map((k) => `${k}=${params.getAll(k)}`).join("&");
   const key = method + "." + responseType + "." + url + "?" + encodedParams;
   const hash = generateHash(key);
   return makeStateKey(hash);
@@ -2234,7 +2224,7 @@ function appendMissingHeadersDetection(url, headers, headersToInclude) {
         if (!headersToInclude.includes(headerName) && !warningProduced.has(key)) {
           warningProduced.add(key);
           const truncatedUrl = truncateMiddle(url);
-          console.warn(formatRuntimeError(2802, "Angular detected that the `".concat(headerName, "` header is accessed, but the value of the header ") + "was not transferred from the server to the client by the HttpTransferCache. " + "To include the value of the `".concat(headerName, "` header for the `").concat(truncatedUrl, "` request, ") + "use the `includeHeaders` list. The `includeHeaders` can be defined either on a request level by adding the `transferCache` parameter, or on an application level by adding the `httpCacheTransfer.includeHeaders` argument to the `provideClientHydration()` call. "));
+          console.warn(formatRuntimeError(2802, `Angular detected that the \`${headerName}\` header is accessed, but the value of the header was not transferred from the server to the client by the HttpTransferCache. To include the value of the \`${headerName}\` header for the \`${truncatedUrl}\` request, use the \`includeHeaders\` list. The \`includeHeaders\` can be defined either on a request level by adding the \`transferCache\` parameter, or on an application level by adding the \`httpCacheTransfer.includeHeaders\` argument to the \`provideClientHydration()\` call. `));
         }
         return value.apply(target, [headerName]);
       };
@@ -2422,7 +2412,7 @@ var _EventManager = class _EventManager {
     const plugins = this._plugins;
     plugin = plugins.find((plugin2) => plugin2.supports(eventName));
     if (!plugin) {
-      throw new RuntimeError(5101, (typeof ngDevMode === "undefined" || ngDevMode) && "No event manager plugin found for event ".concat(eventName));
+      throw new RuntimeError(5101, (typeof ngDevMode === "undefined" || ngDevMode) && `No event manager plugin found for event ${eventName}`);
     }
     this._eventNameToPlugin.set(eventName, plugin);
     return plugin;
@@ -2513,15 +2503,13 @@ var _SharedStylesHost = class _SharedStylesHost {
     }
   }
   onStyleRemoved(style) {
-    var _a, _b;
     const styleRef = this.styleRef;
-    (_b = (_a = styleRef.get(style)) == null ? void 0 : _a.elements) == null ? void 0 : _b.forEach((node) => node.remove());
+    styleRef.get(style)?.elements?.forEach((node) => node.remove());
     styleRef.delete(style);
   }
   collectServerRenderedStyles() {
-    var _a;
-    const styles = (_a = this.doc.head) == null ? void 0 : _a.querySelectorAll("style[".concat(APP_ID_ATTRIBUTE_NAME, '="').concat(this.appId, '"]'));
-    if (styles == null ? void 0 : styles.length) {
+    const styles = this.doc.head?.querySelectorAll(`style[${APP_ID_ATTRIBUTE_NAME}="${this.appId}"]`);
+    if (styles?.length) {
       const styleMap = /* @__PURE__ */ new Map();
       styles.forEach((style) => {
         if (style.textContent != null) {
@@ -2547,8 +2535,8 @@ var _SharedStylesHost = class _SharedStylesHost {
   }
   getStyleElement(host, style) {
     const styleNodesInDOM = this.styleNodesInDOM;
-    const styleEl = styleNodesInDOM == null ? void 0 : styleNodesInDOM.get(style);
-    if ((styleEl == null ? void 0 : styleEl.parentNode) === host) {
+    const styleEl = styleNodesInDOM?.get(style);
+    if (styleEl?.parentNode === host) {
       styleNodesInDOM.delete(style);
       styleEl.removeAttribute(APP_ID_ATTRIBUTE_NAME);
       if (typeof ngDevMode === "undefined" || ngDevMode) {
@@ -2569,10 +2557,9 @@ var _SharedStylesHost = class _SharedStylesHost {
     }
   }
   addStyleToHost(host, style) {
-    var _a;
     const styleEl = this.getStyleElement(host, style);
     const styleRef = this.styleRef;
-    const styleElRef = (_a = styleRef.get(style)) == null ? void 0 : _a.elements;
+    const styleElRef = styleRef.get(style)?.elements;
     if (styleElRef) {
       styleElRef.push(styleEl);
     } else {
@@ -2637,8 +2624,8 @@ var NAMESPACE_URIS = {
 };
 var COMPONENT_REGEX = /%COMP%/g;
 var COMPONENT_VARIABLE = "%COMP%";
-var HOST_ATTR = "_nghost-".concat(COMPONENT_VARIABLE);
-var CONTENT_ATTR = "_ngcontent-".concat(COMPONENT_VARIABLE);
+var HOST_ATTR = `_nghost-${COMPONENT_VARIABLE}`;
+var CONTENT_ATTR = `_ngcontent-${COMPONENT_VARIABLE}`;
 var REMOVE_STYLES_ON_COMPONENT_DESTROY_DEFAULT = true;
 var REMOVE_STYLES_ON_COMPONENT_DESTROY = new InjectionToken(ngDevMode ? "RemoveStylesOnCompDestroy" : "", {
   providedIn: "root",
@@ -2803,7 +2790,7 @@ var DefaultDomRenderer2 = class {
   selectRootElement(selectorOrNode, preserveContent) {
     let el = typeof selectorOrNode === "string" ? this.doc.querySelector(selectorOrNode) : selectorOrNode;
     if (!el) {
-      throw new RuntimeError(-5104, (typeof ngDevMode === "undefined" || ngDevMode) && 'The selector "'.concat(selectorOrNode, '" did not match any elements'));
+      throw new RuntimeError(-5104, (typeof ngDevMode === "undefined" || ngDevMode) && `The selector "${selectorOrNode}" did not match any elements`);
     }
     if (!preserveContent) {
       el.textContent = "";
@@ -2835,7 +2822,7 @@ var DefaultDomRenderer2 = class {
       if (namespaceUri) {
         el.removeAttributeNS(namespaceUri, name);
       } else {
-        el.removeAttribute("".concat(namespace, ":").concat(name));
+        el.removeAttribute(`${namespace}:${name}`);
       }
     } else {
       el.removeAttribute(name);
@@ -2876,7 +2863,7 @@ var DefaultDomRenderer2 = class {
     if (typeof target === "string") {
       target = getDOM().getGlobalEventTarget(this.doc, target);
       if (!target) {
-        throw new Error("Unsupported event target ".concat(target, " for event ").concat(event));
+        throw new Error(`Unsupported event target ${target} for event ${event}`);
       }
     }
     return this.eventManager.addEventListener(target, event, this.decoratePreventDefault(callback));
@@ -2897,7 +2884,9 @@ var DefaultDomRenderer2 = class {
 var AT_CHARCODE = (() => "@".charCodeAt(0))();
 function checkNoSyntheticProp(name, nameKind) {
   if (name.charCodeAt(0) === AT_CHARCODE) {
-    throw new RuntimeError(5105, "Unexpected synthetic ".concat(nameKind, " ").concat(name, " found. Please make sure that:\n  - Either `BrowserAnimationsModule` or `NoopAnimationsModule` are imported in your application.\n  - There is corresponding configuration for the animation named `").concat(name, "` defined in the `animations` field of the `@Component` decorator (see https://angular.io/api/core/Component#animations)."));
+    throw new RuntimeError(5105, `Unexpected synthetic ${nameKind} ${name} found. Please make sure that:
+  - Either \`BrowserAnimationsModule\` or \`NoopAnimationsModule\` are imported in your application.
+  - There is corresponding configuration for the animation named \`${name}\` defined in the \`animations\` field of the \`@Component\` decorator (see https://angular.io/api/core/Component#animations).`);
   }
 }
 function isTemplateNode(node) {
@@ -3185,9 +3174,8 @@ function createApplication(options) {
   return internalCreateApplication(createProvidersConfig(options));
 }
 function createProvidersConfig(options) {
-  var _a;
   return {
-    appProviders: [...BROWSER_MODULE_PROVIDERS, ...(_a = options == null ? void 0 : options.providers) != null ? _a : []],
+    appProviders: [...BROWSER_MODULE_PROVIDERS, ...options?.providers ?? []],
     platformProviders: INTERNAL_BROWSER_PLATFORM_PROVIDERS
   };
 }
@@ -3263,7 +3251,7 @@ var BROWSER_MODULE_PROVIDERS = [{
 var _BrowserModule = class _BrowserModule {
   constructor(providersAlreadyPresent) {
     if ((typeof ngDevMode === "undefined" || ngDevMode) && providersAlreadyPresent) {
-      throw new RuntimeError(5100, "Providers from the `BrowserModule` have already been loaded. If you need access to common directives such as NgIf and NgFor, import the `CommonModule` instead.");
+      throw new RuntimeError(5100, `Providers from the \`BrowserModule\` have already been loaded. If you need access to common directives such as NgIf and NgFor, import the \`CommonModule\` instead.`);
     }
   }
   /**
@@ -3364,7 +3352,7 @@ var _Meta = class _Meta {
   getTag(attrSelector) {
     if (!attrSelector)
       return null;
-    return this._doc.querySelector("meta[".concat(attrSelector, "]")) || null;
+    return this._doc.querySelector(`meta[${attrSelector}]`) || null;
   }
   /**
    * Retrieves a set of `<meta>` tag elements in the current HTML document.
@@ -3375,7 +3363,7 @@ var _Meta = class _Meta {
   getTags(attrSelector) {
     if (!attrSelector)
       return [];
-    const list = this._doc.querySelectorAll("meta[".concat(attrSelector, "]"));
+    const list = this._doc.querySelectorAll(`meta[${attrSelector}]`);
     return list ? [].slice.call(list) : [];
   }
   /**
@@ -3433,7 +3421,7 @@ var _Meta = class _Meta {
   }
   _parseSelector(tag) {
     const attr = tag.name ? "name" : "property";
-    return "".concat(attr, '="').concat(tag[attr], '"');
+    return `${attr}="${tag[attr]}"`;
   }
   _containsAttributes(tag, elem) {
     return Object.keys(tag).every((key) => elem.getAttribute(this._getMetaKeyMap(key)) === tag[key]);
@@ -3559,8 +3547,8 @@ var AngularProfiler = class {
       console.profileEnd(profileName);
     }
     const msPerTick = (end - start) / numTicks;
-    console.log("ran ".concat(numTicks, " change detection cycles"));
-    console.log("".concat(msPerTick.toFixed(2), " ms per check"));
+    console.log(`ran ${numTicks} change detection cycles`);
+    console.log(`${msPerTick.toFixed(2)} ms per check`);
     return new ChangeDetectionPerfRecord(msPerTick, numTicks);
   }
 };
@@ -3707,7 +3695,7 @@ var _HammerGesturesPlugin = class _HammerGesturesPlugin extends EventManagerPlug
     }
     if (!window.Hammer && !this.loader) {
       if (typeof ngDevMode === "undefined" || ngDevMode) {
-        this.console.warn('The "'.concat(eventName, '" event cannot be bound because Hammer.JS is not ') + "loaded and no custom loader has been specified.");
+        this.console.warn(`The "${eventName}" event cannot be bound because Hammer.JS is not loaded and no custom loader has been specified.`);
       }
       return false;
     }
@@ -3725,7 +3713,7 @@ var _HammerGesturesPlugin = class _HammerGesturesPlugin extends EventManagerPlug
       zone.runOutsideAngular(() => this._loaderPromise.then(() => {
         if (!window.Hammer) {
           if (typeof ngDevMode === "undefined" || ngDevMode) {
-            this.console.warn("The custom HAMMER_LOADER completed, but Hammer.JS is not present.");
+            this.console.warn(`The custom HAMMER_LOADER completed, but Hammer.JS is not present.`);
           }
           deregister = () => {
           };
@@ -3736,7 +3724,7 @@ var _HammerGesturesPlugin = class _HammerGesturesPlugin extends EventManagerPlug
         }
       }).catch(() => {
         if (typeof ngDevMode === "undefined" || ngDevMode) {
-          this.console.warn('The "'.concat(eventName, '" event cannot be bound because the custom ') + "Hammer.JS loader failed.");
+          this.console.warn(`The "${eventName}" event cannot be bound because the custom Hammer.JS loader failed.`);
         }
         deregister = () => {
         };
@@ -3921,9 +3909,9 @@ var _DomSanitizerImpl = class _DomSanitizerImpl extends DomSanitizer {
         )) {
           return unwrapSafeValue(value);
         }
-        throw new RuntimeError(5201, (typeof ngDevMode === "undefined" || ngDevMode) && "unsafe value used in a resource URL context (see ".concat(XSS_SECURITY_URL, ")"));
+        throw new RuntimeError(5201, (typeof ngDevMode === "undefined" || ngDevMode) && `unsafe value used in a resource URL context (see ${XSS_SECURITY_URL})`);
       default:
-        throw new RuntimeError(5202, (typeof ngDevMode === "undefined" || ngDevMode) && "Unexpected SecurityContext ".concat(ctx, " (see ").concat(XSS_SECURITY_URL, ")"));
+        throw new RuntimeError(5202, (typeof ngDevMode === "undefined" || ngDevMode) && `Unexpected SecurityContext ${ctx} (see ${XSS_SECURITY_URL})`);
     }
   }
   bypassSecurityTrustHtml(value) {
@@ -4072,4 +4060,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-LOKEC6UG.js.map
+//# sourceMappingURL=chunk-T3JOYEAF.js.map
